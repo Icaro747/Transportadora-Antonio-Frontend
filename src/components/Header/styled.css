@@ -1,0 +1,67 @@
+:root {
+  --height-header: 70px
+}
+
+.header-container {
+  display: flex;
+  background-color: #ffffff;
+  min-height: var(--height-header);
+  position: relative;
+}
+
+.header-box {
+  min-height: var(--height-header);
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  background-color: #ffffff;
+  box-shadow: 0 1px 15px rgba(0, 0, 0, .04), 0 1px 6px rgba(0, 0, 0, .04);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.header-item-right {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  z-index: 9;
+  top: 0;
+  right: 0;
+  margin-right: 50px;
+}
+
+.header-button-user {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.header-button-user span {
+  color: #878787;
+}
+
+.header-box-item-menu {
+  display: flex;
+  min-height: var(--height-header);
+  margin-right: 2rem;
+}
+
+.header-button-img {
+  width: 40px;
+  margin-left: 10px;
+}
+
+.header-item-center {
+  min-height: var(--height-header);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+}
