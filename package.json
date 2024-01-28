@@ -1,6 +1,6 @@
 {
   "name": "transportadora-antonio-frontend",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.7",
     "bootstrap-icons": "^1.11.3",
+    "chart.js": "^4.4.1",
     "date-fns": "^3.3.1",
     "env-cmd": "^10.1.0",
     "primeicons": "^6.0.1",
@@ -23,7 +24,7 @@
   "scripts": {
     "start": "env-cmd -f src/config/.env.local react-scripts start",
     "build": "env-cmd -f src/config/.env react-scripts build",
-    "test": "react-scripts test",
+    "test": "env-cmd -f src/config/.env.local react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

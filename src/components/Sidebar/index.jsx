@@ -7,22 +7,40 @@ import "./styled.css";
 function Sidebar({ Show, setShow }) {
   const items = [
     {
+      label: "Estatísticas",
+      icon: "pi pi-chart-bar",
+      children: [
+        {
+          label: "Visão geral",
+          icon: "pi pi-sitemap",
+          to: "/app/graficos/visaogeral"
+        }
+      ]
+    },
+    {
       label: "Cadastros",
       icon: "pi pi-file-edit",
       children: [
-        { label: "Empresas", icon: "pi pi-building", to: "/app/empresa" },
-        { label: "Produto", icon: "pi pi-mobile", to: "/app/produto" },
         {
-          label: "Grupo de Produto",
+          label: "Eventos dos Veiculos",
+          icon: "pi pi-dollar",
+          to: "/app/cadastros/eventoveiculo"
+        },
+        {
+          label: "Categoria",
           icon: "pi pi-tags",
-          to: "/app/grupo"
+          to: "/app/cadastros/categoria"
         },
         {
-          label: "Ponto de Venda",
-          icon: "pi pi-shopping-cart",
-          to: "/app/pontoVenda"
+          label: "Veiculo",
+          icon: "pi pi-truck",
+          to: "/app/cadastros/veiculo"
         },
-        { label: "Fucionario", icon: "pi pi-user", to: "/app/fucionario" }
+        {
+          label: "Fucionario",
+          icon: "pi pi-user",
+          to: "/app/cadastros/fucionario"
+        }
       ]
     }
   ];

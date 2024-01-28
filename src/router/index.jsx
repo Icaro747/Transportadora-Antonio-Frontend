@@ -8,7 +8,11 @@ import {
 import Layout from "components/Layout";
 
 import Home from "pages/Home";
+import ListaCategoria from "pages/ListaCategoria";
+import ListaEventoVeiculo from "pages/ListaEventoVeiculo";
 import ListaFucionario from "pages/ListaFucionario";
+import ListaVeiculo from "pages/ListaVeiculo";
+import VisaoGeral from "pages/VisaoGeral";
 
 function MainRouter() {
   const routeConfig = createBrowserRouter([
@@ -25,13 +29,50 @@ function MainRouter() {
           )
         },
         {
-          path: "fucionario",
+          path: "cadastros",
           children: [
             {
-              index: true,
+              path: "fucionario",
               element: (
                 <Layout NomePaginaAtual="Lista Fucionarios">
                   <ListaFucionario />
+                </Layout>
+              )
+            },
+            {
+              path: "veiculo",
+              element: (
+                <Layout NomePaginaAtual="Lista Veiculo">
+                  <ListaVeiculo />
+                </Layout>
+              )
+            },
+            {
+              path: "eventoveiculo",
+              element: (
+                <Layout NomePaginaAtual="Lista Eventos dos Veiculos">
+                  <ListaEventoVeiculo />
+                </Layout>
+              )
+            },
+            {
+              path: "categoria",
+              element: (
+                <Layout NomePaginaAtual="Lista Categorias">
+                  <ListaCategoria />
+                </Layout>
+              )
+            }
+          ]
+        },
+        {
+          path: "graficos",
+          children: [
+            {
+              path: "visaogeral",
+              element: (
+                <Layout NomePaginaAtual="Visão Geral">
+                  <VisaoGeral />
                 </Layout>
               )
             }

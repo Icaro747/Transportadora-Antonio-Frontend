@@ -43,7 +43,9 @@ class MaskUtil {
     const decimalPosition = numericValue.indexOf('.');
 
     // Separa a parte inteira e parte decimal
-    let integerPart; let decimalPart;
+    let integerPart;
+    let decimalPart;
+
     if (decimalPosition !== -1) {
       integerPart = numericValue.slice(0, decimalPosition);
       decimalPart = numericValue.slice(decimalPosition + 1).padEnd(2, '0');
@@ -52,8 +54,14 @@ class MaskUtil {
       decimalPart = '00';
     }
 
-    // Aplica a máscara monetária
-    const formattedValue = `${this.applyGenericMask(integerPart, '###.###.###')},${decimalPart}`;
+    // Inverte a parte inteira para facilitar a aplicação da máscara
+    const reversedIntegerPart = integerPart.split('').reverse().join('');
+
+    // Aplica a máscara monetária invertida
+    const maskedIntegerPart = this.applyGenericMask(reversedIntegerPart, '###.###.###').split('').reverse().join('');
+
+    // Concatena a parte inteira e parte decimal formatadas
+    const formattedValue = `${maskedIntegerPart},${decimalPart}`;
 
     return formattedValue;
   }

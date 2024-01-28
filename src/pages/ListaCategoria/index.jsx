@@ -5,7 +5,6 @@ import { format } from "date-fns";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
-import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import { Sidebar } from "primereact/sidebar";
@@ -15,12 +14,12 @@ import { useNotification } from "context/NotificationContext";
 
 import Api from "utils/Api";
 
-function ListaFucionario() {
+function ListaCategoria() {
   const { setLoading } = useLoading();
   const Requicicao = new Api();
   const Notify = useNotification();
 
-  const [lista, setLista] = useState([]);
+  const [Lista, setLista] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -29,15 +28,13 @@ function ListaFucionario() {
 
   const [data, setData] = useState({
     id: "",
-    nome: "",
-    apelido: ""
+    nome: ""
   });
 
   const LimparDataUser = () => {
     setData({
       id: "",
-      nome: "",
-      apelido: ""
+      nome: ""
     });
   };
 
@@ -45,13 +42,13 @@ function ListaFucionario() {
     try {
       setLoading(true);
       const resposta = await Requicicao.Get({
-        endpoint: "/Funcionario"
+        endpoint: "/Categoria"
       });
       setLista(resposta);
     } catch (error) {
       Notify({
         type: "erro",
-        message: "Erro ao buscar funcionarios"
+        message: "Erro ao buscar Categoria"
       });
     } finally {
       setLoading(false);
@@ -63,47 +60,47 @@ function ListaFucionario() {
     setData({ ...data, [name]: value });
   };
 
-  const AtualizarFuncionario = async () => {
+  const AtulizarCategoira = async () => {
     try {
       setLoading(true);
       await Requicicao.Put({
-        endpoint: "/Funcionario",
+        endpoint: "/Categoria",
         data
       });
 
       Notify({
         type: "success",
-        message: "Funcionario atualizado."
+        message: "Categoria atualizado."
       });
       setShowModal(false);
       StateDataPage();
     } catch (error) {
       Notify({
-        type: "erro",
-        message: "Erro ao atualizar o funcionario"
+        type: "error",
+        message: "Erro ao atualizar o categoria"
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const CriarFuncionario = async () => {
+  const CriarCategoria = async () => {
     try {
       setLoading(true);
       await Requicicao.Post({
-        endpoint: "/Funcionario",
+        endpoint: "/Categoria",
         data: { nome: data.nome, apelido: data.apelido }
       });
       Notify({
         type: "success",
-        message: "Funcionario cadastrado."
+        message: "Categoria cadastrado."
       });
       setShowModal(false);
       StateDataPage();
     } catch (error) {
       Notify({
-        type: "erro",
-        message: "Erro ao cadastrar o funcionario"
+        type: "error",
+        message: "Erro ao cadastrar o categoria"
       });
     } finally {
       setLoading(false);
@@ -112,17 +109,16 @@ function ListaFucionario() {
 
   const HandleSubmit = (event) => {
     event.preventDefault();
-    if (data.id !== "") AtualizarFuncionario();
-    else CriarFuncionario();
+    if (data.id !== "") AtulizarCategoira();
+    else CriarCategoria();
   };
 
   const HandleEditClick = (rowData) => {
-    const novaData = {
+    const newData = {
       id: rowData.id,
-      nome: rowData.nome,
-      apelido: rowData.apelido
+      nome: rowData.nome
     };
-    setData(novaData);
+    setData(newData);
   };
 
   const OnGlobalFilterChange = (e) => {
@@ -136,7 +132,7 @@ function ListaFucionario() {
       setGlobalFilterValue(value);
     } catch (error) {
       Notify({
-        type: "erro",
+        type: "error",
         message: "Erro no Filtro"
       });
     }
@@ -148,10 +144,6 @@ function ListaFucionario() {
       nome: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
-      },
-      apelido: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
       }
     });
     setGlobalFilterValue("");
@@ -159,44 +151,6 @@ function ListaFucionario() {
 
   const ClearFilter = () => {
     InitFilters();
-  };
-
-  const DesativarFuncionario = async (rowData) => {
-    try {
-      setLoading(true);
-      await Requicicao.Delete({
-        endpoint: "/Funcionario",
-        params: { id: rowData.id }
-      });
-      Notify({
-        type: "success",
-        message: "Funcionario Removido."
-      });
-      StateDataPage();
-    } catch (error) {
-      Notify({
-        type: "erro",
-        message: "Erro ao remover o funcionario."
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const Confirm = (event, rowData) => {
-    confirmPopup({
-      group: "headless",
-      target: event.currentTarget,
-      message: "Tem certeza de que deseja deletar esse item?",
-      icon: "pi pi-exclamation-triangle",
-      defaultFocus: "reject",
-      accept: () => {
-        DesativarFuncionario(rowData);
-      },
-      reject: () => {},
-      acceptLabel: "Sim",
-      rejectLabel: "Não"
-    });
   };
 
   useEffect(() => () => StateDataPage(), []);
@@ -225,10 +179,10 @@ function ListaFucionario() {
           <div className="row">
             <div className="col-12">
               <h5 className="mb-4">
-                {data.id !== "" ? "Editar " : "Novo "}Fucionario
+                {data.id !== "" ? "Editar " : "Nova "}Categoria
               </h5>
             </div>
-            <div className="col-12 mb-3">
+            <div className="col-12">
               <label htmlFor="nome" className="form-label">
                 Nome
               </label>
@@ -241,20 +195,7 @@ function ListaFucionario() {
               />
             </div>
 
-            <div className="col-12 mb-3">
-              <label htmlFor="apelido" className="form-label">
-                Apelido
-              </label>
-              <InputText
-                id="apelido"
-                name="apelido"
-                value={data.apelido}
-                onChange={HandleChange}
-                className="form-control"
-              />
-            </div>
-
-            <div className="col-md-12">
+            <div className="col-md-12 mt-3">
               <div className="w-100 d-flex flex-row-reverse">
                 <Button
                   type="submit"
@@ -285,17 +226,16 @@ function ListaFucionario() {
           </span>
         </div>
         <DataTable
-          value={lista}
+          value={Lista}
           stripedRows
           paginator
           rows={5}
           tableStyle={{ minWidth: "50rem" }}
-          emptyMessage="Nenhum fucionario encontrado."
-          globalFilterFields={["nome", "apelido"]}
+          emptyMessage="Nenhum categoria encontrado."
+          globalFilterFields={["nome"]}
           filters={filters}
         >
           <Column field="nome" header="Nome" sortable />
-          <Column field="apelido" header="Apelido" sortable />
           <Column
             field="criadoEm"
             header="Data Criação"
@@ -328,7 +268,6 @@ function ListaFucionario() {
             header="Ações"
             body={(rowData) => (
               <div>
-                <ConfirmPopup />
                 <div className="d-flex flex-row gap-3">
                   <Button
                     className="btn btn-tabela"
@@ -337,14 +276,6 @@ function ListaFucionario() {
                     onClick={() => {
                       HandleEditClick(rowData);
                       setShowModal(true);
-                    }}
-                  />
-                  <Button
-                    className="btn btn-tabela"
-                    type="button"
-                    icon="bi bi-trash"
-                    onClick={(event) => {
-                      Confirm(event, rowData);
                     }}
                   />
                 </div>
@@ -357,4 +288,4 @@ function ListaFucionario() {
   );
 }
 
-export default ListaFucionario;
+export default ListaCategoria;

@@ -14,29 +14,31 @@ function Layout({ children, NomePaginaAtual }) {
 
   return (
     <NotificationProvider>
-      <Header />
-      <div className="layout-content">
-        <div className="main-container">
-          <Sidebar Show={ShowMenu} setShow={setShowMenu} />
-          <div
-            className="main-box"
-            style={ShowMenu ? { marginLeft: "229px" } : {}}
-          >
-            <main className="content">
-              <LoadingProvider>
-                <>
-                  <BreadCrumb NomePaginaAtual={NomePaginaAtual} />
-                  {children}
-                </>
-              </LoadingProvider>
-            </main>
-            <footer>
-              <hr />
-              <p>Akkadian Tech 2023</p>
-            </footer>
+      <>
+        <Header />
+        <div className="layout-content">
+          <div className="main-container">
+            <Sidebar Show={ShowMenu} setShow={setShowMenu} />
+            <div
+              className="main-box"
+              style={ShowMenu ? { marginLeft: "229px" } : {}}
+            >
+              <main className="content">
+                <LoadingProvider>
+                  <>
+                    <BreadCrumb NomePaginaAtual={NomePaginaAtual} />
+                    {children}
+                  </>
+                </LoadingProvider>
+              </main>
+              <footer>
+                <hr />
+                <p>Icarus Dev 2023</p>
+              </footer>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     </NotificationProvider>
   );
 }

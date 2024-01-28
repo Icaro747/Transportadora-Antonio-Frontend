@@ -8,6 +8,7 @@ function ErrorBoundary({ children }) {
   useEffect(() => {
     const handleErrors = (error, errorInfo) => {
       // Log the error to an error reporting service
+      // eslint-disable-next-line no-console
       console.error(error, errorInfo);
       setError(error);
     };

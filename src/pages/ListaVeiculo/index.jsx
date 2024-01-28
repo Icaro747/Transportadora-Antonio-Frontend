@@ -5,9 +5,10 @@ import { format } from "date-fns";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
-import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import { DataTable } from "primereact/datatable";
+import { InputMask } from "primereact/inputmask";
 import { InputText } from "primereact/inputtext";
+import { MultiSelect } from "primereact/multiselect";
 import { Sidebar } from "primereact/sidebar";
 
 import { useLoading } from "context/LoadingContext";
@@ -15,43 +16,56 @@ import { useNotification } from "context/NotificationContext";
 
 import Api from "utils/Api";
 
-function ListaFucionario() {
+function ListaVeiculo() {
   const { setLoading } = useLoading();
   const Requicicao = new Api();
   const Notify = useNotification();
 
   const [lista, setLista] = useState([]);
 
-  const [showModal, setShowModal] = useState(false);
+  const [showModalFormVeviculo, setShowModalFormVeviculo] = useState(false);
 
   const [filters, setFilters] = useState(null);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
 
+  const [listaFuncionario, setListaFuncionario] = useState([]);
+  const [selectedFuncionarios, setSelectedFuncionarios] = useState(null);
   const [data, setData] = useState({
     id: "",
     nome: "",
-    apelido: ""
+    descricao: "",
+    placa: "",
+    funcionarios: []
   });
 
   const LimparDataUser = () => {
     setData({
       id: "",
       nome: "",
-      apelido: ""
+      descricao: "",
+      placa: "",
+      funcionarios: []
     });
   };
 
   const StateDataPage = async () => {
     try {
       setLoading(true);
-      const resposta = await Requicicao.Get({
+      const listaVeiculos = await Requicicao.Get({
+        endpoint: "/Veiculo"
+      });
+      setLista(listaVeiculos);
+
+      const listaFuncionarios = await Requicicao.Get({
         endpoint: "/Funcionario"
       });
-      setLista(resposta);
+      setListaFuncionario(
+        listaFuncionarios.map((item) => ({ code: item.id, name: item.nome }))
+      );
     } catch (error) {
       Notify({
         type: "erro",
-        message: "Erro ao buscar funcionarios"
+        message: "Erro ao buscar veiculo"
       });
     } finally {
       setLoading(false);
@@ -60,50 +74,57 @@ function ListaFucionario() {
 
   const HandleChange = (event) => {
     const { name, value } = event.target;
-    setData({ ...data, [name]: value });
+    if (name === "funcionarios")
+      setData({ ...data, [name]: value.map((item) => item.code) });
+    else setData({ ...data, [name]: value });
   };
 
-  const AtualizarFuncionario = async () => {
+  const AtulizarVeiculo = async () => {
     try {
       setLoading(true);
       await Requicicao.Put({
-        endpoint: "/Funcionario",
+        endpoint: "/Veiculo",
         data
       });
 
       Notify({
         type: "success",
-        message: "Funcionario atualizado."
+        message: "Veiculo atualizado."
       });
-      setShowModal(false);
+      setShowModalFormVeviculo(false);
       StateDataPage();
     } catch (error) {
       Notify({
         type: "erro",
-        message: "Erro ao atualizar o funcionario"
+        message: "Erro ao atualizar o veiculo"
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const CriarFuncionario = async () => {
+  const CriarVeiculo = async () => {
     try {
       setLoading(true);
       await Requicicao.Post({
-        endpoint: "/Funcionario",
-        data: { nome: data.nome, apelido: data.apelido }
+        endpoint: "/Veiculo",
+        data: {
+          nome: data.nome,
+          descricao: data.descricao,
+          placa: data.placa,
+          funcionarios: data.funcionarios
+        }
       });
       Notify({
         type: "success",
-        message: "Funcionario cadastrado."
+        message: "Veiculo cadastrado."
       });
-      setShowModal(false);
+      setShowModalFormVeviculo(false);
       StateDataPage();
     } catch (error) {
       Notify({
         type: "erro",
-        message: "Erro ao cadastrar o funcionario"
+        message: "Erro ao cadastrar o veiculo"
       });
     } finally {
       setLoading(false);
@@ -112,22 +133,21 @@ function ListaFucionario() {
 
   const HandleSubmit = (event) => {
     event.preventDefault();
-    if (data.id !== "") AtualizarFuncionario();
-    else CriarFuncionario();
+    if (data.id !== "") AtulizarVeiculo();
+    else CriarVeiculo();
   };
 
   const HandleEditClick = (rowData) => {
-    const novaData = {
-      id: rowData.id,
-      nome: rowData.nome,
-      apelido: rowData.apelido
-    };
-    setData(novaData);
+    const esteItem = lista.filter((x) => x.id === rowData.id)[0];
+    setSelectedFuncionarios(
+      listaFuncionario.filter((x) => esteItem.funcionarios.includes(x.code))
+    );
+    setData(esteItem);
   };
 
-  const OnGlobalFilterChange = (e) => {
+  const OnGlobalFilterChange = (event) => {
     try {
-      const { value } = e.target;
+      const { value } = event.target;
       const thisFilters = { ...filters };
 
       thisFilters.global.value = value;
@@ -137,7 +157,7 @@ function ListaFucionario() {
     } catch (error) {
       Notify({
         type: "erro",
-        message: "Erro no Filtro"
+        message: "Erro de busca do item"
       });
     }
   };
@@ -149,7 +169,11 @@ function ListaFucionario() {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
       },
-      apelido: {
+      descricao: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
+      },
+      placa: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
       }
@@ -161,45 +185,13 @@ function ListaFucionario() {
     InitFilters();
   };
 
-  const DesativarFuncionario = async (rowData) => {
-    try {
-      setLoading(true);
-      await Requicicao.Delete({
-        endpoint: "/Funcionario",
-        params: { id: rowData.id }
-      });
-      Notify({
-        type: "success",
-        message: "Funcionario Removido."
-      });
+  useEffect(
+    () => () => {
       StateDataPage();
-    } catch (error) {
-      Notify({
-        type: "erro",
-        message: "Erro ao remover o funcionario."
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const Confirm = (event, rowData) => {
-    confirmPopup({
-      group: "headless",
-      target: event.currentTarget,
-      message: "Tem certeza de que deseja deletar esse item?",
-      icon: "pi pi-exclamation-triangle",
-      defaultFocus: "reject",
-      accept: () => {
-        DesativarFuncionario(rowData);
-      },
-      reject: () => {},
-      acceptLabel: "Sim",
-      rejectLabel: "Não"
-    });
-  };
-
-  useEffect(() => () => StateDataPage(), []);
+      InitFilters();
+    },
+    []
+  );
 
   return (
     <div>
@@ -208,7 +200,7 @@ function ListaFucionario() {
           type="button"
           className="btn btn-primary"
           onClick={() => {
-            setShowModal(true);
+            setShowModalFormVeviculo(true);
             LimparDataUser();
           }}
         >
@@ -218,14 +210,14 @@ function ListaFucionario() {
       <Sidebar
         style={{ minWidth: "350px" }}
         position="right"
-        visible={showModal}
-        onHide={() => setShowModal(false)}
+        visible={showModalFormVeviculo}
+        onHide={() => setShowModalFormVeviculo(false)}
       >
         <form onSubmit={HandleSubmit} className="card-body">
           <div className="row">
             <div className="col-12">
               <h5 className="mb-4">
-                {data.id !== "" ? "Editar " : "Novo "}Fucionario
+                {data.id !== "" ? "Editar " : "Novo "}Veiculo
               </h5>
             </div>
             <div className="col-12 mb-3">
@@ -242,15 +234,49 @@ function ListaFucionario() {
             </div>
 
             <div className="col-12 mb-3">
-              <label htmlFor="apelido" className="form-label">
-                Apelido
+              <label htmlFor="descricao" className="form-label">
+                Descrição
               </label>
               <InputText
-                id="apelido"
-                name="apelido"
-                value={data.apelido}
+                id="descricao"
+                name="descricao"
+                value={data.descricao}
                 onChange={HandleChange}
                 className="form-control"
+              />
+            </div>
+
+            <div className="col-12 mb-3">
+              <label htmlFor="placa" className="form-label">
+                Placa
+              </label>
+              <InputMask
+                id="placa"
+                name="placa"
+                value={data.placa}
+                onChange={HandleChange}
+                className="form-control"
+                mask="aaa-9a99"
+              />
+            </div>
+
+            <div className="col-12 mb-3">
+              <label htmlFor="funcionarios" className="form-label">
+                Funcionarios
+              </label>
+              <MultiSelect
+                id="funcionarios"
+                value={selectedFuncionarios}
+                onChange={(e) => {
+                  HandleChange({
+                    target: { name: "funcionarios", value: e.value }
+                  });
+                  setSelectedFuncionarios(e.value);
+                }}
+                options={listaFuncionario}
+                optionLabel="name"
+                placeholder="Selecione Funcionarios"
+                className="w-100"
               />
             </div>
 
@@ -290,12 +316,13 @@ function ListaFucionario() {
           paginator
           rows={5}
           tableStyle={{ minWidth: "50rem" }}
-          emptyMessage="Nenhum fucionario encontrado."
-          globalFilterFields={["nome", "apelido"]}
+          emptyMessage="Nenhum veiculo encontrado."
+          globalFilterFields={["nome", "descricao", "placa"]}
           filters={filters}
         >
           <Column field="nome" header="Nome" sortable />
-          <Column field="apelido" header="Apelido" sortable />
+          <Column field="descricao" header="Descrição" sortable />
+          <Column field="placa" header="Placa" sortable />
           <Column
             field="criadoEm"
             header="Data Criação"
@@ -328,7 +355,6 @@ function ListaFucionario() {
             header="Ações"
             body={(rowData) => (
               <div>
-                <ConfirmPopup />
                 <div className="d-flex flex-row gap-3">
                   <Button
                     className="btn btn-tabela"
@@ -336,16 +362,10 @@ function ListaFucionario() {
                     icon="bi bi-pencil"
                     onClick={() => {
                       HandleEditClick(rowData);
-                      setShowModal(true);
+                      setShowModalFormVeviculo(true);
                     }}
-                  />
-                  <Button
-                    className="btn btn-tabela"
-                    type="button"
-                    icon="bi bi-trash"
-                    onClick={(event) => {
-                      Confirm(event, rowData);
-                    }}
+                    tooltip="Editar item"
+                    tooltipOptions={{ position: "bottom" }}
                   />
                 </div>
               </div>
@@ -357,4 +377,4 @@ function ListaFucionario() {
   );
 }
 
-export default ListaFucionario;
+export default ListaVeiculo;

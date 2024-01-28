@@ -37,6 +37,7 @@ export function NotificationProvider({ children }) {
         life: duration
       });
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error);
     }
   };
