@@ -16,7 +16,6 @@ function VisaoGeral() {
   const Notify = useNotification();
 
   const [dataDataCalendar, setDataDataCalendar] = useState(null);
-  console.log("🚀 ~ VisaoGeral ~ dataDataCalendar:", dataDataCalendar);
 
   const [data, setData] = useState(null);
 
@@ -56,12 +55,9 @@ function VisaoGeral() {
     </div>
   );
 
-  useEffect(
-    () => () => {
-      StateDataPage();
-    },
-    []
-  );
+  useEffect(() => {
+    StateDataPage();
+  }, []);
 
   useEffect(() => {
     if (data !== null) {

@@ -263,13 +263,10 @@ function ListaEventoVeiculo() {
     });
   };
 
-  useEffect(
-    () => () => {
-      StateDataPage();
-      InitFilters();
-    },
-    []
-  );
+  useEffect(() => {
+    StateDataPage();
+    InitFilters();
+  }, []);
 
   return (
     <div>

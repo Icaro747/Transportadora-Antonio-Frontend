@@ -153,7 +153,7 @@ function ListaCategoria() {
     InitFilters();
   };
 
-  useEffect(() => () => StateDataPage(), []);
+  useEffect(() => StateDataPage(), []);
 
   return (
     <div>

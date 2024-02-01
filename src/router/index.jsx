@@ -16,6 +16,7 @@ import VisaoGeral from "pages/VisaoGeral";
 
 function MainRouter() {
   const routeConfig = createBrowserRouter([
+    { path: "*", element: <Navigate to="/app" /> },
     { path: "/", element: <Navigate to="/app" /> },
     {
       path: "/app",

@@ -199,7 +199,7 @@ function ListaFucionario() {
     });
   };
 
-  useEffect(() => () => StateDataPage(), []);
+  useEffect(() => StateDataPage(), []);
 
   return (
     <div>

@@ -185,13 +185,10 @@ function ListaVeiculo() {
     InitFilters();
   };
 
-  useEffect(
-    () => () => {
-      StateDataPage();
-      InitFilters();
-    },
-    []
-  );
+  useEffect(() => {
+    StateDataPage();
+    InitFilters();
+  }, []);
 
   return (
     <div>
